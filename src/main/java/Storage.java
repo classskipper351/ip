@@ -1,4 +1,5 @@
 import java.io.*;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 
 /**
@@ -17,18 +18,30 @@ public class Storage {
      * it read evey line and use parser to handle it
      * @return The list of to-do items read from the file
      * @throws FileNotFoundException If the file "list.txt" does not exist
+     * @throws IndexOutOfBoundsException If the file "list.txt" is broken or not readable
      */
-    static ArrayList ReadFile() throws FileNotFoundException {
+    static ArrayList<Todo> ReadFile() throws FileNotFoundException {
         File file = new File("list.txt");
         if (!file.exists()) {
             return todolist;
         } else {
             FileReader fr = new FileReader(file);
             BufferedReader reader = new BufferedReader(fr);
+            System.out.println("loading saved list from saved file");
             try {
                 String line;
                 while ((line = reader.readLine()) != null) { // Process every line
-                    Parser.ProcessSavedLine(line, ListManager.todolist);
+
+                    try{
+                        Parser.ProcessSavedLine(line, todolist);
+                        }
+                    catch (IndexOutOfBoundsException e){
+                        System.out.println(e.getMessage());
+                        System.out.println("unexpected format , skipping");
+                    }catch (DateTimeException e){
+                        System.out.println("unexpected format , skipping");
+                    }
+
                 }
             } catch (IOException e) {
                 System.out.println(e.getMessage());

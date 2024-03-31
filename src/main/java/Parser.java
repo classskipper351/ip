@@ -1,4 +1,7 @@
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.Locale;
 
 /**
  * The {@code Parser} class handles the parsing of input lines and creating corresponding to-do items.
@@ -25,7 +28,7 @@ public class Parser {
         } else if (line.contains("|x|")) {
             isDone = true;
         } else {
-            System.out.println("Unexpected format");
+            System.out.println("Unexpected format , skipping");
             return;
         }
         String description;
@@ -42,16 +45,18 @@ public class Parser {
             String[] contents = parts.split("by:", 2);
             description = contents[0].replace("(", "");
             endtime = contents[1].replace(")", "");
-            Deadline task = new Deadline(isDone, description.trim(), endtime.trim());
+            LocalDate endDate = parseDateFile(endtime);
+
+            Deadline task = new Deadline(isDone, description.trim(), endDate);
             todolist.add(task);
         } else if (line.contains("|E|")) {
             String parts = line.substring(BEGIN_INDEX);
             String[] contents = parts.split("from:", 2);
             description = contents[0].replace("(", "");
-            String[] time = contents[1].split("by:", 2);
+            String[] time = contents[1].split("to:", 2);
             starttime = time[0].replace("(", "").replace(")", "");
             endtime = time[1].replace("(", "").replace(")", "");
-            Event task = new Event(isDone, description.trim(), endtime.trim(), starttime.trim());
+            Event task = new Event(isDone, description.trim(), parseDateFile(endtime.trim()), parseDateFile(starttime.trim()) );
             todolist.add(task);
         } else {
             System.out.println("Unexpected format, skipping");
@@ -78,13 +83,17 @@ public class Parser {
      * @throws InvalidTimeForm If the time format is invalid
      */
     static String AddDeadline(String description) throws InvalidTimeForm {
+        if(!description.contains("/by")){
+            throw new InvalidTimeForm();
+        }
         String[] part = (description.trim()).split("/by");
 
         if (part.length > 2) {
             throw new InvalidTimeForm(); // two or more "/by"
         }
+        LocalDate endtime = parseDateInput(part[1].trim());
 
-        Deadline deadline = new Deadline(false, part[0].trim(), part[1].trim());
+        Deadline deadline = new Deadline(false, part[0].trim(), endtime);
         ListManager.todolist.add(deadline);
         return "Deadline added\n";
     }
@@ -98,6 +107,13 @@ public class Parser {
      */
     static String AddEvent(String description) throws InvalidTimeForm {
 
+        if(!description.contains("/from")||!description.contains("/to")){
+            throw new InvalidTimeForm();
+        }
+        if(description.indexOf("/from")>description.indexOf("/to")){
+            throw new InvalidTimeForm();
+        }
+
         String[] part = (description.trim()).split("/from");
         if (part.length > 2) {
             throw new InvalidTimeForm();
@@ -110,9 +126,19 @@ public class Parser {
         }
         String end = content[1].trim();
         String start = content[0].trim();
-
-        Event event = new Event(false, EventDescription, end, start);
+        Event event = new Event(false, EventDescription,parseDateInput(end), parseDateInput(start));
         ListManager.todolist.add(event);
         return "Event added\n";
+    }
+
+    public static LocalDate parseDateFile(String timeString) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy",Locale.ENGLISH);
+        return LocalDate.parse(timeString, formatter);
+    }
+    public static LocalDate parseDateInput(String timeString) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
+        return LocalDate.parse(timeString, formatter);
     }
 }

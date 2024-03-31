@@ -3,8 +3,9 @@
  * it has a start time and an end time
  *
  */
+import java.time.LocalDate;
 public class Event extends Deadline{
-    String starttime;
+    LocalDate starttime;
     String Icon="E";
     /**
      * Constructs a new event item.
@@ -14,7 +15,8 @@ public class Event extends Deadline{
      * @param endtime     A String indicating the end time of this event
      * @param starttime   A String indicating the start time of this event
      */
-    public Event(boolean isDone, String description, String endtime, String starttime) {
+    public Event(boolean isDone, String description, LocalDate endtime, LocalDate starttime) {
+
         super(isDone, description, endtime);
         this.starttime = starttime;
     }
@@ -25,6 +27,6 @@ public class Event extends Deadline{
     @Override
     public String toString(){
         String DoneIcon = this.isDone? "x":" ";
-        return "["+Icon+"]"+"["+DoneIcon+"]"+ " "+ this.description + "(from: "+starttime+ ") (by: "+this.endtime+")" ;
+        return "["+Icon+"]"+"["+DoneIcon+"]"+ " "+ this.description + "(from: "+formatDate(starttime)+ ") (to: "+formatDate(this.endtime)+")" ;
     }
 }

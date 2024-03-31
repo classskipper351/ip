@@ -12,6 +12,7 @@ public class UI {
             "Qchat, A truly humanized intelligent voice assistant\n" +
                     "knows better about life and better about you\n" +
                     "What can I do for you?\n" +
+                    "you can enter 'help' for help\n"+
                     "----------------------------------------------------------------\n");
 
     /**
@@ -27,8 +28,8 @@ public class UI {
     private static final String LIST_FORM =
             "please enter in one of the following forms:\n" +
                     "todo 'description'\n" +
-                    "deadline 'description' /by 'end time'\n" +
-                    "event 'description' /from 'start time' /to 'end time'\n";
+                    "deadline 'description' /by \"yyyy-MM-dd\" \n" +
+                    "event 'description' /from \"yyyy-MM-dd\" /to \"yyyy-MM-dd\" \n";
 
     /**
      * Displays the welcome greeting message.

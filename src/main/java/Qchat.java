@@ -38,14 +38,10 @@ public class Qchat {
 
     public static void main(String[] args) {
 
-
-       ui.Greeting();
-       String command = "" ;
-       while(!command.equals("Bye")){
-
-           command = CommandReader();
-
-       }
+        ui.Greeting();
+        ListManager Listmanager = null;
+        ListManager.HandleList();
+        ui.Goodbye();
 
    }
 

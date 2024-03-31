@@ -1,7 +1,8 @@
 import java.io.*;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Scanner;
-
+import java.time.LocalDate;
 public class ListManager {
     static UI ui = new UI();
     static Parser parser = new Parser();
@@ -17,14 +18,19 @@ public class ListManager {
 
         String[] part = (description.trim()).split(" ");
         String suffix = description.replace(part[0], "");
-
-        if (part[0].startsWith("todo")) {
-            return (Parser.AddTodo(suffix));
-        } else if (part[0].startsWith("deadline")) {
-            return (Parser.AddDeadline(suffix));
-        } else if (part[0].startsWith("event")) {
-            return (Parser.AddEvent(suffix));
-        } else {
+        try{
+            if (part[0].startsWith("todo")) {
+                return (Parser.AddTodo(suffix));
+            } else if (part[0].startsWith("deadline")) {
+                return (Parser.AddDeadline(suffix));
+            } else if (part[0].startsWith("event")) {
+                return (Parser.AddEvent(suffix));
+            } else {
+                System.out.println("unexpected task from , please add again");
+                return "";
+            }
+        }catch (DateTimeException e){
+            System.out.println("unexpected date form , please type the date as yyyy-mm-dd format");
             return "";
         }
 
@@ -178,7 +184,7 @@ public class ListManager {
 
         System.out.println("please type the task number you want to set as not done \n");
         UI.PrintList(todolist,ALL_TASKS);
-        ;
+
         int number = in.nextInt();
 
 
